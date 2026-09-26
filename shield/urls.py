@@ -24,6 +24,15 @@ def google_verification(request):
     return HttpResponse("Verification file not found.", status=404)
 
 
+def robots_txt(request):
+    content = """User-agent: *
+Allow: /
+
+Sitemap: https://social-shield-ir70.onrender.com/sitemap.xml
+"""
+    return HttpResponse(content, content_type="text/plain")
+
+
 urlpatterns = [
     path("", views.home, name="home"),
 
@@ -50,4 +59,6 @@ urlpatterns = [
         google_verification,
         name="google_verification",
     ),
+
+    path("robots.txt", robots_txt, name="robots_txt"),
 ]
