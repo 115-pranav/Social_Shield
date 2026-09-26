@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
+    "django.contrib.sitemaps",
     "shield",
 ]
 
@@ -203,3 +203,4 @@ LOGOUT_REDIRECT_URL = "/"
 # ---------------------------------------------------------
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+SITE_URL = "https://social-shield-ir70.onrender.com"
