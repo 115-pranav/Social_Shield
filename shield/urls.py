@@ -1,20 +1,40 @@
-from django.urls import path
+from pathlib import Path
+
+from django.conf import settings
 from django.contrib.sitemaps.views import sitemap
+from django.http import HttpResponse
+from django.urls import path
+
 from .sitemaps import StaticViewSitemap
 from . import views
+
 
 sitemaps = {
     "static": StaticViewSitemap,
 }
 
+
+def google_verification(request):
+    file_path = Path(settings.BASE_DIR) / "google909cc2a2e7f088d8.html"
+
+    if file_path.exists():
+        content = file_path.read_text(encoding="utf-8")
+        return HttpResponse(content, content_type="text/html")
+
+    return HttpResponse("Verification file not found.", status=404)
+
+
 urlpatterns = [
     path("", views.home, name="home"),
+
     path("analyze/", views.analyze_message, name="analyze_message"),
     path("history/", views.history, name="history"),
     path("dashboard/", views.dashboard, name="dashboard"),
+
     path("register/", views.register_user, name="register"),
     path("login/", views.login_user, name="login"),
     path("logout/", views.logout_user, name="logout"),
+
     path("download-data/", views.download_data, name="download_data"),
     path("delete-my-data/", views.delete_my_data, name="delete_my_data"),
 
@@ -23,5 +43,11 @@ urlpatterns = [
         sitemap,
         {"sitemaps": sitemaps},
         name="django.contrib.sitemaps.views.sitemap",
+    ),
+
+    path(
+        "google909cc2a2e7f088d8.html",
+        google_verification,
+        name="google_verification",
     ),
 ]
