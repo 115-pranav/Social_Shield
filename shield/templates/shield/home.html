@@ -2,14 +2,55 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Social Shield - Threat Detection</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="{% static 'shield/style.css' %}">
+    <!-- SEO Title -->
+    <title>Social Shield - AI Social Media Threat Detection</title>
+
+    <!-- SEO Description -->
+    <meta name="description"
+          content="Social Shield uses Machine Learning and Natural Language Processing to detect spam, phishing, suspicious and abusive messages.">
+
+    <!-- Search Engine Instructions -->
+    <meta name="robots"
+          content="index, follow">
+
+    <!-- Canonical URL -->
+    <link rel="canonical"
+          href="https://social-shield-ir70.onrender.com/">
+
+    <!-- Open Graph -->
+    <meta property="og:title"
+          content="Social Shield - AI Social Media Threat Detection">
+
+    <meta property="og:description"
+          content="Analyze messages and identify potential spam, phishing, suspicious and abusive content using Machine Learning and NLP.">
+
+    <meta property="og:url"
+          content="https://social-shield-ir70.onrender.com/">
+
+    <meta property="og:type"
+          content="website">
+
+    <meta property="og:site_name"
+          content="Social Shield">
+
+    <!-- Theme Color -->
+    <meta name="theme-color"
+          content="#0f172a">
+
+    <!-- CSS -->
+    <link rel="stylesheet"
+          href="{% static 'shield/style.css' %}">
+
 </head>
+
 
 <body>
 
@@ -17,21 +58,35 @@
     <nav class="navbar">
 
         <div class="logo">
-    <img src="{% static 'shield/logo.png' %}" alt="Social Shield Logo">
-    <span>Social Shield</span>
-</div>
+
+            <img src="{% static 'shield/logo.png' %}"
+                 alt="Social Shield Logo">
+
+            <span>Social Shield</span>
+
+        </div>
+
 
         <div class="nav-links">
+
             <a href="/">Home</a>
 
             {% if user.is_authenticated %}
+
                 <a href="/history/">History</a>
+
                 <a href="/dashboard/">Dashboard</a>
+
                 <a href="/logout/">Logout</a>
+
             {% else %}
+
                 <a href="/login/">Login</a>
+
                 <a href="/register/">Register</a>
+
             {% endif %}
+
         </div>
 
     </nav>
@@ -52,8 +107,11 @@
                 Processing to analyze messages and identify potential threats.
             </p>
 
-            <a href="#analyzer" class="hero-button">
+            <a href="#analyzer"
+               class="hero-button">
+
                 Analyze a Message
+
             </a>
 
         </div>
@@ -62,7 +120,8 @@
 
 
     <!-- Analyzer -->
-    <section class="analyzer-section" id="analyzer">
+    <section class="analyzer-section"
+             id="analyzer">
 
         <div class="section-title">
 
@@ -94,19 +153,27 @@
                     0 / 1000
                 </span>
 
-                <button id="analyzeBtn" type="button">
+                <button id="analyzeBtn"
+                        type="button">
+
                     Analyze Message
+
                 </button>
 
             </div>
 
 
             <!-- Result -->
-            <div id="resultBox" class="result-box hidden">
+            <div id="resultBox"
+                 class="result-box hidden">
 
-                <div class="result-icon" id="resultIcon">
+                <div class="result-icon"
+                     id="resultIcon">
+
                     -
+
                 </div>
+
 
                 <div class="result-content">
 
@@ -120,12 +187,12 @@
 
 
                     <!-- URL Warning -->
-                    <div
-                        id="urlWarning"
-                        class="url-warning hidden"
-                    >
+                    <div id="urlWarning"
+                         class="url-warning hidden">
+
                         This message contains a URL. Be careful before
                         opening unknown links.
+
                     </div>
 
 
@@ -133,24 +200,35 @@
                     <div class="result-details">
 
                         <div>
+
                             <strong>Category</strong>
+
                             <span id="categoryResult">
                                 -
                             </span>
+
                         </div>
 
+
                         <div>
+
                             <strong>Risk Level</strong>
+
                             <span id="riskResult">
                                 -
                             </span>
+
                         </div>
 
+
                         <div>
+
                             <strong>Confidence</strong>
+
                             <span id="confidenceResult">
                                 -
                             </span>
+
                         </div>
 
                     </div>
@@ -179,6 +257,7 @@
 
 
         <div class="category-container">
+
 
             <div class="category-card">
 
@@ -278,6 +357,7 @@
 
         <div class="about-container">
 
+
             <div class="about-card">
 
                 <h3>Machine Learning</h3>
@@ -332,7 +412,9 @@
     </footer>
 
 
+    <!-- JavaScript -->
     <script src="{% static 'shield/script.js' %}"></script>
 
 </body>
+
 </html>
