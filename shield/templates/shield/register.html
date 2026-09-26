@@ -1,0 +1,153 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Social Shield | Register</title>
+
+    <link rel="stylesheet"
+          href="{% static 'shield/style.css' %}">
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            <img src="{% static 'shield/logo.png' %}" alt="Social Shield Logo">
+            <span>Social Shield</span>
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/">Home</a>
+
+            <a href="/login/">Login</a>
+
+        </div>
+
+    </nav>
+
+
+    <section class="auth-section">
+
+        <div class="auth-card">
+
+            <div class="auth-icon">
+                🛡️
+            </div>
+
+            <h1>Create Account</h1>
+
+            <p>
+                Create your Social Shield account
+            </p>
+
+
+            {% if error %}
+
+            <div class="auth-error">
+                {{ error }}
+            </div>
+
+            {% endif %}
+
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <label>
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Enter username"
+                    required
+                >
+
+
+                <label>
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter email"
+                    required
+                >
+
+
+                <label>
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Enter password"
+                    required
+                >
+
+
+                <label>
+                    Confirm Password
+                </label>
+
+                <input
+                    type="password"
+                    name="confirm_password"
+                    placeholder="Confirm password"
+                    required
+                >
+
+
+                <button type="submit">
+                    Create Account
+                </button>
+
+            </form>
+
+
+            <p class="auth-footer">
+
+                Already have an account?
+
+                <a href="/login/">
+                    Login
+                </a>
+
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+
+        <h3>
+            🛡️ Social Shield
+        </h3>
+
+        <p>
+            AI-powered social media threat detection system.
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

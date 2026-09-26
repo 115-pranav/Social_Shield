@@ -1,0 +1,26 @@
+text,label
+"Hello, how are you today?",Safe
+"Good morning have a nice day",Safe
+"Can you send me the project details?",Safe
+"Let's meet tomorrow for the project",Safe
+"Thank you for your message",Safe
+"Congratulations you have won a free prize click this link",Spam
+"Win a free mobile phone now",Spam
+"Limited offer claim your free reward today",Spam
+"You have won a lottery prize",Spam
+"Get free cash immediately",Spam
+"Your account will be blocked verify your password now",Phishing
+"Click this link to verify your bank account",Phishing
+"Send your OTP to confirm your account",Phishing
+"Your bank account needs verification click here",Phishing
+"Enter your password to receive the reward",Phishing
+"This message contains a suspicious link",Suspicious
+"Please click this unknown link immediately",Suspicious
+"Your account activity looks unusual",Suspicious
+"Urgent action may be required on your account",Suspicious
+"Verify your details using this link",Suspicious
+"You are stupid and useless",Abusive
+"Nobody likes you",Abusive
+"Stop behaving like an idiot",Abusive
+"You are a worthless person",Abusive
+"Shut up you stupid fool",Abusive

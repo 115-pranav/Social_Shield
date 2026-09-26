@@ -1,0 +1,129 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Social Shield | Login</title>
+
+    <link rel="stylesheet"
+          href="{% static 'shield/style.css' %}">
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            <img src="{% static 'shield/logo.png' %}" alt="Social Shield Logo">
+            <span>Social Shield</span>
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/">Home</a>
+
+            <a href="/register/">Register</a>
+
+        </div>
+
+    </nav>
+
+
+    <section class="auth-section">
+
+        <div class="auth-card">
+
+            <div class="auth-icon">
+                🛡️
+            </div>
+
+            <h1>Welcome Back</h1>
+
+            <p>
+                Login to your Social Shield account
+            </p>
+
+
+            {% if error %}
+
+            <div class="auth-error">
+                {{ error }}
+            </div>
+
+            {% endif %}
+
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <label>
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Enter username"
+                    required
+                >
+
+
+                <label>
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Enter password"
+                    required
+                >
+
+
+                <button type="submit">
+                    Login
+                </button>
+
+            </form>
+
+
+            <p class="auth-footer">
+
+                Don't have an account?
+
+                <a href="/register/">
+                    Create Account
+                </a>
+
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+
+        <h3>
+            🛡️ Social Shield
+        </h3>
+
+        <p>
+            AI-powered social media threat detection system.
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

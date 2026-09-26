@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Social Shield - Dashboard</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 18px 45px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+            font-size: 15px;
+        }
+
+        nav a:hover {
+            color: #60a5fa;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1300px;
+            margin: 35px auto;
+        }
+
+        .title-section {
+            margin-bottom: 25px;
+        }
+
+        .title-section h1 {
+            margin-bottom: 8px;
+            font-size: 32px;
+        }
+
+        .title-section p {
+            color: #6b7280;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            margin: 0;
+            font-size: 15px;
+            color: #6b7280;
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .total {
+            border-top: 5px solid #2563eb;
+        }
+
+        .safe {
+            border-top: 5px solid #16a34a;
+        }
+
+        .spam {
+            border-top: 5px solid #f59e0b;
+        }
+
+        .phishing {
+            border-top: 5px solid #dc2626;
+        }
+
+        .suspicious {
+            border-top: 5px solid #9333ea;
+        }
+
+        .abusive-card {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 250px;
+        }
+
+        .abusive-card h3 {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        .abusive-card .number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .chart-box {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            margin-bottom: 30px;
+        }
+
+        .chart-box h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 550px;
+            height: 400px;
+            margin: auto;
+        }
+
+        .table-box {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            overflow-x: auto;
+        }
+
+        .table-box h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #eef2ff;
+            padding: 14px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .message {
+            max-width: 400px;
+            word-wrap: break-word;
+        }
+
+        .risk {
+            font-weight: bold;
+            padding: 6px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .risk-low {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .risk-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .risk-high {
+            background: #ffedd5;
+            color: #9a3412;
+        }
+
+        .risk-critical {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        @media (max-width: 1000px) {
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            header {
+                padding: 18px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav a {
+                margin: 0 8px;
+            }
+
+            .container {
+                width: 94%;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .abusive-card {
+                max-width: 100%;
+            }
+
+            .title-section h1 {
+                font-size: 26px;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        🛡️ Social Shield
+    </div>
+
+    <nav>
+
+        <a href="/">Home</a>
+
+        <a href="/history/">History</a>
+
+        <a href="/dashboard/">Dashboard</a>
+
+        <a href="/admin/">Admin</a>
+
+    </nav>
+
+</header>
+
+
+<div class="container">
+
+
+    <div class="title-section">
+
+        <h1>My Dashboard</h1>
+
+        <p>
+            View your Social Shield analysis history and statistics.
+        </p>
+
+    </div>
+
+
+        <div class="dashboard-actions">
+            <a href="{% url 'download_data' %}" class="download-button">
+                Download My Data
+            </a>
+
+            <form method="POST"
+                  action="{% url 'delete_my_data' %}"
+                  onsubmit="return confirm('Are you sure you want to delete all your saved analysis data?');">
+                {% csrf_token %}
+                <button type="submit" class="delete-button">
+                    Delete My Data
+                </button>
+            </form>
+        </div>
+
+    <div class="stats">
+
+
+        <div class="stat-card total">
+
+            <h3>Total Analyses</h3>
+
+            <div class="number">
+                {{ total }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-card safe">
+
+            <h3>Safe Messages</h3>
+
+            <div class="number">
+                {{ safe }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-card spam">
+
+            <h3>Spam</h3>
+
+            <div class="number">
+                {{ spam }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-card phishing">
+
+            <h3>Phishing</h3>
+
+            <div class="number">
+                {{ phishing }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-card suspicious">
+
+            <h3>Suspicious</h3>
+
+            <div class="number">
+                {{ suspicious }}
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="abusive-card">
+
+        <h3>Abusive Messages</h3>
+
+        <div class="number">
+            {{ abusive }}
+        </div>
+
+    </div>
+
+
+    <!-- THREAT DISTRIBUTION -->
+
+    <div class="chart-box">
+
+        <h2>Threat Distribution</h2>
+
+        <div class="chart-container">
+
+            <canvas id="threatChart"></canvas>
+
+        </div>
+
+    </div>
+
+
+    <!-- RECENT ANALYSES -->
+
+    <div class="table-box">
+
+        <h2>Recent Analyses</h2>
+
+
+        {% if recent %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Message</th>
+
+                    <th>Category</th>
+
+                    <th>Risk Level</th>
+
+                    <th>Confidence</th>
+
+                    <th>Date & Time</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for item in recent %}
+
+                <tr>
+
+                    <td>
+                        {{ item.id }}
+                    </td>
+
+                    <td class="message">
+                        {{ item.message }}
+                    </td>
+
+                    <td>
+                        {{ item.category }}
+                    </td>
+
+                    <td>
+
+                        {% if item.risk_level == "LOW" %}
+
+                        <span class="risk risk-low">
+                            LOW
+                        </span>
+
+                        {% elif item.risk_level == "MEDIUM" %}
+
+                        <span class="risk risk-medium">
+                            MEDIUM
+                        </span>
+
+                        {% elif item.risk_level == "HIGH" %}
+
+                        <span class="risk risk-high">
+                            HIGH
+                        </span>
+
+                        {% elif item.risk_level == "CRITICAL" %}
+
+                        <span class="risk risk-critical">
+                            CRITICAL
+                        </span>
+
+                        {% else %}
+
+                        <span class="risk">
+                            {{ item.risk_level }}
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+                        {{ item.confidence }}%
+                    </td>
+
+                    <td>
+                        {{ item.created_at|date:"d-m-Y H:i" }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+
+        {% else %}
+
+        <div class="empty">
+
+            <h3>No analysis results yet</h3>
+
+            <p>
+                Analyze a message from the Social Shield homepage
+                to see results here.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+
+    </div>
+
+
+</div>
+
+
+<footer>
+
+    © 2026 Social Shield |
+    AI-Based Social Media Threat Detection
+
+</footer>
+
+
+<script>
+
+    const safeCount = Number("{{ safe }}");
+    const spamCount = Number("{{ spam }}");
+    const phishingCount = Number("{{ phishing }}");
+    const suspiciousCount = Number("{{ suspicious }}");
+    const abusiveCount = Number("{{ abusive }}");
+
+
+    const chartElement =
+        document.getElementById("threatChart");
+
+
+    if (chartElement) {
+
+        new Chart(chartElement, {
+
+            type: "doughnut",
+
+            data: {
+
+                labels: [
+                    "Safe",
+                    "Spam",
+                    "Phishing",
+                    "Suspicious",
+                    "Abusive"
+                ],
+
+                datasets: [
+
+                    {
+
+                        data: [
+                            safeCount,
+                            spamCount,
+                            phishingCount,
+                            suspiciousCount,
+                            abusiveCount
+                        ],
+
+                        borderWidth: 2
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+
+                        position: "bottom"
+
+                    }
+
+                }
+
+            }
+
+        });
+
+    }
+
+</script>
+
+
+</body>
+
+</html>

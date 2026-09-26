@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Social Shield - History</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        .container {
+            width: 90%;
+            margin: 40px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #eef2ff;
+        }
+
+        .message {
+            max-width: 400px;
+        }
+
+        .safe {
+            color: green;
+            font-weight: bold;
+        }
+
+        .high {
+            color: orange;
+            font-weight: bold;
+        }
+
+        .critical {
+            color: red;
+            font-weight: bold;
+        }
+
+        .medium {
+            color: #d97706;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>🛡️ Social Shield</h1>
+
+        <div>
+            <a href="/">Home</a>
+            <a href="/history/">History</a>
+            <a href="/admin/">Admin</a>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <h2>Analysis History</h2>
+
+        <div class="card">
+
+            {% if analyses %}
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Message</th>
+                        <th>Category</th>
+                        <th>Risk</th>
+                        <th>Confidence</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for analysis in analyses %}
+
+                    <tr>
+                        <td>{{ analysis.id }}</td>
+
+                        <td class="message">
+                            {{ analysis.message }}
+                        </td>
+
+                        <td>
+                            {{ analysis.category }}
+                        </td>
+
+                        <td class="{{ analysis.risk_level|lower }}">
+                            {{ analysis.risk_level }}
+                        </td>
+
+                        <td>
+                            {{ analysis.confidence }}%
+                        </td>
+
+                        <td>
+                            {{ analysis.created_at|date:"d-m-Y H:i" }}
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+            <div class="empty">
+                <h3>No analysis results yet</h3>
+                <p>Analyze a message from the Social Shield homepage.</p>
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</body>
+</html>

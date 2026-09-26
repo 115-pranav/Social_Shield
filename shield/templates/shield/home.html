@@ -1,0 +1,338 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Social Shield - Threat Detection</title>
+
+    <link rel="stylesheet" href="{% static 'shield/style.css' %}">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+
+        <div class="logo">
+    <img src="{% static 'shield/logo.png' %}" alt="Social Shield Logo">
+    <span>Social Shield</span>
+</div>
+
+        <div class="nav-links">
+            <a href="/">Home</a>
+
+            {% if user.is_authenticated %}
+                <a href="/history/">History</a>
+                <a href="/dashboard/">Dashboard</a>
+                <a href="/logout/">Logout</a>
+            {% else %}
+                <a href="/login/">Login</a>
+                <a href="/register/">Register</a>
+            {% endif %}
+        </div>
+
+    </nav>
+
+
+    <!-- Hero Section -->
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <h1>
+                Protect Yourself from
+                <span>Online Threats</span>
+            </h1>
+
+            <p>
+                Social Shield uses Machine Learning and Natural Language
+                Processing to analyze messages and identify potential threats.
+            </p>
+
+            <a href="#analyzer" class="hero-button">
+                Analyze a Message
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- Analyzer -->
+    <section class="analyzer-section" id="analyzer">
+
+        <div class="section-title">
+
+            <h2>Analyze a Message</h2>
+
+            <p>
+                Enter a message below and Social Shield will analyze it.
+            </p>
+
+        </div>
+
+
+        <div class="analyzer-card">
+
+            <label for="messageInput">
+                Enter your message
+            </label>
+
+            <textarea
+                id="messageInput"
+                maxlength="1000"
+                placeholder="Example: Congratulations! You won a free prize. Click this link now."
+            ></textarea>
+
+
+            <div class="input-footer">
+
+                <span id="charCount">
+                    0 / 1000
+                </span>
+
+                <button id="analyzeBtn" type="button">
+                    Analyze Message
+                </button>
+
+            </div>
+
+
+            <!-- Result -->
+            <div id="resultBox" class="result-box hidden">
+
+                <div class="result-icon" id="resultIcon">
+                    -
+                </div>
+
+                <div class="result-content">
+
+                    <h3 id="resultTitle">
+                        Analysis Result
+                    </h3>
+
+                    <p id="resultMessage">
+                        -
+                    </p>
+
+
+                    <!-- URL Warning -->
+                    <div
+                        id="urlWarning"
+                        class="url-warning hidden"
+                    >
+                        This message contains a URL. Be careful before
+                        opening unknown links.
+                    </div>
+
+
+                    <!-- Result Details -->
+                    <div class="result-details">
+
+                        <div>
+                            <strong>Category</strong>
+                            <span id="categoryResult">
+                                -
+                            </span>
+                        </div>
+
+                        <div>
+                            <strong>Risk Level</strong>
+                            <span id="riskResult">
+                                -
+                            </span>
+                        </div>
+
+                        <div>
+                            <strong>Confidence</strong>
+                            <span id="confidenceResult">
+                                -
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Threat Categories -->
+    <section class="categories">
+
+        <div class="section-title">
+
+            <h2>Threat Categories</h2>
+
+            <p>
+                Social Shield can identify different types of harmful content.
+            </p>
+
+        </div>
+
+
+        <div class="category-container">
+
+            <div class="category-card">
+
+                <div class="category-icon">
+                    S
+                </div>
+
+                <h3>Safe</h3>
+
+                <p>
+                    Normal messages that do not show suspicious behavior.
+                </p>
+
+            </div>
+
+
+            <div class="category-card">
+
+                <div class="category-icon">
+                    SP
+                </div>
+
+                <h3>Spam</h3>
+
+                <p>
+                    Unwanted promotional or repeated messages.
+                </p>
+
+            </div>
+
+
+            <div class="category-card">
+
+                <div class="category-icon">
+                    P
+                </div>
+
+                <h3>Phishing</h3>
+
+                <p>
+                    Messages attempting to obtain passwords, OTPs or
+                    sensitive information.
+                </p>
+
+            </div>
+
+
+            <div class="category-card">
+
+                <div class="category-icon">
+                    ?
+                </div>
+
+                <h3>Suspicious</h3>
+
+                <p>
+                    Messages containing potentially suspicious behavior
+                    or links.
+                </p>
+
+            </div>
+
+
+            <div class="category-card">
+
+                <div class="category-icon">
+                    A
+                </div>
+
+                <h3>Abusive</h3>
+
+                <p>
+                    Messages containing insulting or abusive language.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- About -->
+    <section class="about">
+
+        <div class="section-title">
+
+            <h2>About Social Shield</h2>
+
+            <p>
+                Social Shield is a Machine Learning and Natural Language
+                Processing based threat detection system.
+            </p>
+
+        </div>
+
+
+        <div class="about-container">
+
+            <div class="about-card">
+
+                <h3>Machine Learning</h3>
+
+                <p>
+                    A trained Machine Learning model analyzes the text and
+                    predicts the type of threat.
+                </p>
+
+            </div>
+
+
+            <div class="about-card">
+
+                <h3>Natural Language Processing</h3>
+
+                <p>
+                    NLP techniques help the system process and understand
+                    textual messages.
+                </p>
+
+            </div>
+
+
+            <div class="about-card">
+
+                <h3>Threat Detection</h3>
+
+                <p>
+                    The system classifies messages as Safe, Spam, Phishing,
+                    Suspicious or Abusive.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+
+        <p>
+            Social Shield - Intelligent Social Media Threat Detection
+        </p>
+
+        <p>
+            Machine Learning | NLP | Django
+        </p>
+
+    </footer>
+
+
+    <script src="{% static 'shield/script.js' %}"></script>
+
+</body>
+</html>
