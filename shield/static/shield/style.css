@@ -436,7 +436,79 @@ footer p {
 /* ==============================
    RESPONSIVE DESIGN
 ============================== */
+        .security-tools {
+            margin-bottom: 30px;
+        }
 
+        .security-tools h2 {
+            margin-bottom: 18px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .tool-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            text-decoration: none;
+            color: #1f2937;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-top: 5px solid #2563eb;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .tool-icon {
+            font-size: 38px;
+            margin-bottom: 12px;
+        }
+
+        .tool-card h3 {
+            margin: 0 0 8px;
+            font-size: 19px;
+        }
+
+        .tool-card p {
+            margin: 0;
+            color: #6b7280;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .tool-button {
+            display: inline-block;
+            margin-top: 16px;
+            background: #2563eb;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .tool-card:nth-child(2) {
+            border-top-color: #9333ea;
+        }
+
+        .tool-card:nth-child(2) .tool-button {
+            background: #9333ea;
+        }
+
+        .tool-card:nth-child(3) {
+            border-top-color: #16a34a;
+        }
+
+        .tool-card:nth-child(3) .tool-button {
+            background: #16a34a;
+        }
 @media (max-width: 900px) {
 
     .navbar {
@@ -530,7 +602,9 @@ footer p {
     .category-container {
         grid-template-columns: 1fr;
     }
-
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
 }
 
 /* ==============================
