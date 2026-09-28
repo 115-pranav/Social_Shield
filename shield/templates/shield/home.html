@@ -17,7 +17,6 @@
     <meta name="description"
           content="Social Shield uses Machine Learning and Natural Language Processing to detect spam, phishing, suspicious and abusive messages.">
 
-    <!-- Search Engine Instructions -->
     <meta name="robots"
           content="index, follow">
 
@@ -45,19 +44,240 @@
     <meta name="theme-color"
           content="#0f172a">
 
-    <!-- CSS -->
+    <!-- Existing CSS -->
     <link rel="stylesheet"
           href="{% static 'shield/style.css' %}">
+
+    <!-- Flow Menu CSS -->
+    <style>
+
+        /* ================================
+           NAVIGATION
+        ================================= */
+
+        .navbar {
+            position: relative;
+            z-index: 1000;
+        }
+
+        .logo {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* ================================
+           FLOW MENU
+        ================================= */
+
+        .flow-menu {
+            position: absolute;
+            top: 75px;
+            left: 20px;
+
+            width: 300px;
+
+            background: rgba(255, 255, 255, 0.98);
+
+            border-radius: 18px;
+
+            padding: 20px;
+
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.18);
+
+            border: 1px solid #e5e7eb;
+
+            opacity: 0;
+            visibility: hidden;
+
+            transform: translateY(-15px);
+
+            transition:
+                opacity 0.25s ease,
+                transform 0.25s ease,
+                visibility 0.25s ease;
+        }
+
+        .flow-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .flow-title {
+            text-align: center;
+
+            font-size: 18px;
+            font-weight: bold;
+
+            color: #0f172a;
+
+            margin-bottom: 12px;
+        }
+
+        .flow-line {
+            width: 100%;
+            height: 2px;
+
+            background: #e5e7eb;
+
+            margin-bottom: 15px;
+        }
+
+        .flow-item {
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 13px;
+
+            background: #f8fafc;
+
+            border-radius: 12px;
+
+            text-decoration: none;
+
+            color: #0f172a;
+
+            border: 1px solid #e2e8f0;
+
+            transition: all 0.2s ease;
+        }
+
+        .flow-item:hover {
+            transform: translateX(5px);
+
+            background: #eff6ff;
+
+            border-color: #3b82f6;
+
+            box-shadow:
+                0 5px 15px rgba(59, 130, 246, 0.12);
+        }
+
+        .flow-icon {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #dbeafe;
+
+            border-radius: 10px;
+
+            font-size: 21px;
+
+            flex-shrink: 0;
+        }
+
+        .flow-item strong {
+            display: block;
+
+            font-size: 15px;
+
+            margin-bottom: 3px;
+        }
+
+        .flow-item small {
+            display: block;
+
+            color: #64748b;
+
+            font-size: 12px;
+        }
+
+        .flow-arrow {
+            text-align: center;
+
+            color: #2563eb;
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+            margin: 5px 0;
+        }
+
+        /* ================================
+           LOGIN BUTTON
+        ================================= */
+
+        .nav-links .login-button {
+            display: inline-block;
+
+            background: #2563eb;
+
+            color: white !important;
+
+            padding: 10px 18px;
+
+            border-radius: 9px;
+
+            font-weight: bold;
+
+            text-decoration: none;
+
+            box-shadow:
+                0 5px 14px rgba(37, 99, 235, 0.25);
+
+            transition: all 0.2s ease;
+        }
+
+        .nav-links .login-button:hover {
+            background: #1d4ed8;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 8px 18px rgba(37, 99, 235, 0.30);
+        }
+
+        /* ================================
+           MOBILE
+        ================================= */
+
+        @media (max-width: 600px) {
+
+            .flow-menu {
+                left: 10px;
+                right: 10px;
+
+                width: auto;
+            }
+
+            .nav-links {
+                gap: 8px;
+            }
+
+            .nav-links .login-button {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+        }
+
+    </style>
 
 </head>
 
 
 <body>
 
-    <!-- Navigation -->
+
+    <!-- ================================
+         NAVIGATION
+    ================================= -->
+
     <nav class="navbar">
 
-        <div class="logo">
+
+        <!-- CLICKABLE SOCIAL SHIELD LOGO -->
+
+        <div class="logo"
+             id="socialShieldLogo">
 
             <img src="{% static 'shield/logo.png' %}"
                  alt="Social Shield Logo">
@@ -67,45 +287,246 @@
         </div>
 
 
-        <div class="nav-links">
+        <!-- ================================
+             FLOW MENU
+        ================================= -->
 
-            <a href="/">Home</a>
+        <div class="flow-menu"
+             id="flowMenu">
+
+
+            <div class="flow-title">
+
+                🛡️ Social Shield Navigation
+
+            </div>
+
+
+            <div class="flow-line"></div>
+
+
+            <!-- HOME -->
+
+            <a href="/"
+               class="flow-item">
+
+                <span class="flow-icon">
+                    🏠
+                </span>
+
+                <div>
+
+                    <strong>
+                        Home
+                    </strong>
+
+                    <small>
+                        Main Social Shield page
+                    </small>
+
+                </div>
+
+            </a>
+
+
+            <div class="flow-arrow">
+                ↓
+            </div>
+
+
+            <!-- MESSAGE ANALYZER -->
+
+            <a href="{% url 'analyze_message' %}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="flow-item">
+
+                <span class="flow-icon">
+                    🔍
+                </span>
+
+                <div>
+
+                    <strong>
+                        Message Analyzer
+                    </strong>
+
+                    <small>
+                        Analyze suspicious messages
+                    </small>
+
+                </div>
+
+            </a>
+
 
             {% if user.is_authenticated %}
 
-                <a href="/history/">History</a>
 
-                <a href="/dashboard/">Dashboard</a>
+                <div class="flow-arrow">
+                    ↓
+                </div>
 
-                <a href="/logout/">Logout</a>
 
-            {% else %}
+                <!-- DASHBOARD -->
 
-                <a href="/login/">Login</a>
+                <a href="/dashboard/"
+                   class="flow-item">
 
-                <a href="/register/">Register</a>
+                    <span class="flow-icon">
+                        📊
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Dashboard
+                        </strong>
+
+                        <small>
+                            View your security statistics
+                        </small>
+
+                    </div>
+
+                </a>
+
+
+                <div class="flow-arrow">
+                    ↓
+                </div>
+
+
+                <!-- HISTORY -->
+
+                <a href="/history/"
+                   class="flow-item">
+
+                    <span class="flow-icon">
+                        📜
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            History
+                        </strong>
+
+                        <small>
+                            View previous analyses
+                        </small>
+
+                    </div>
+
+                </a>
+
+
+                <div class="flow-arrow">
+                    ↓
+                </div>
+
+
+                <!-- MY DATA -->
+
+                <a href="/download-data/"
+                   class="flow-item">
+
+                    <span class="flow-icon">
+                        ⬇️
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            My Data
+                        </strong>
+
+                        <small>
+                            Download your analysis data
+                        </small>
+
+                    </div>
+
+                </a>
+
 
             {% endif %}
 
+
         </div>
+
+
+        <!-- ================================
+             RIGHT NAVIGATION
+        ================================= -->
+
+        <div class="nav-links">
+
+
+            {% if user.is_authenticated %}
+
+                <a href="/logout/">
+                    Logout
+                </a>
+
+
+            {% else %}
+
+                <!-- LOGIN -->
+
+                <a href="/login/"
+                   class="login-button">
+
+                    🔐 Login
+
+                </a>
+
+
+                <!-- REGISTER -->
+
+                <a href="/register/">
+
+                    Register
+
+                </a>
+
+            {% endif %}
+
+
+        </div>
+
 
     </nav>
 
 
-    <!-- Hero Section -->
+
+    <!-- ================================
+         HERO SECTION
+    ================================= -->
+
     <section class="hero">
 
         <div class="hero-content">
 
+
             <h1>
+
                 Protect Yourself from
-                <span>Online Threats</span>
+
+                <span>
+                    Online Threats
+                </span>
+
             </h1>
 
+
             <p>
+
                 Social Shield uses Machine Learning and Natural Language
                 Processing to analyze messages and identify potential threats.
+
             </p>
+
 
             <a href="{% url 'analyze_message' %}"
                target="_blank"
@@ -116,55 +537,101 @@
 
             </a>
 
+
         </div>
 
     </section>
 
 
-    <!-- Analyzer Launch -->
-    <section class="analyzer-section" id="analyzer">
+
+    <!-- ================================
+         ANALYZER LAUNCH
+    ================================= -->
+
+    <section class="analyzer-section"
+             id="analyzer">
+
 
         <div class="section-title">
 
-            <h2>Message Analyzer</h2>
 
-            <p>Open the dedicated Social Shield analyzer in a new browser tab.</p>
+            <h2>
+                Message Analyzer
+            </h2>
+
+
+            <p>
+                Open the dedicated Social Shield analyzer in a new browser tab.
+            </p>
+
 
         </div>
 
-        <div class="analyzer-card" style="text-align:center;">
 
-            <div style="font-size:48px; margin-bottom:15px;">🛡️</div>
+        <div class="analyzer-card"
+             style="text-align:center;">
 
-            <h3 style="font-size:26px; margin-bottom:10px;">Check a Suspicious Message</h3>
+
+            <div style="font-size:48px; margin-bottom:15px;">
+                🛡️
+            </div>
+
+
+            <h3 style="font-size:26px; margin-bottom:10px;">
+
+                Check a Suspicious Message
+
+            </h3>
+
 
             <p style="color:#64748b; max-width:650px; margin:0 auto 25px;">
-                Paste an SMS, social-media message, promotional message or suspicious text and let Social Shield analyze it using the trained ML model.
+
+                Paste an SMS, social-media message, promotional message
+                or suspicious text and let Social Shield analyze it using
+                the trained ML model.
+
             </p>
+
 
             <a href="{% url 'analyze_message' %}"
                target="_blank"
                rel="noopener noreferrer"
                class="hero-button"
                style="display:inline-block; text-decoration:none;">
+
                 🔍 Open Message Analyzer ↗
+
             </a>
+
 
         </div>
 
     </section>
 
 
-    <!-- Threat Categories -->
+
+    <!-- ================================
+         THREAT CATEGORIES
+    ================================= -->
+
     <section class="categories">
+
 
         <div class="section-title">
 
-            <h2>Threat Categories</h2>
+
+            <h2>
+                Threat Categories
+            </h2>
+
 
             <p>
-                Social Shield can identify different types of harmful content.
+
+                Social Shield can identify different types
+                of harmful content.
+
             </p>
+
 
         </div>
 
@@ -172,98 +639,163 @@
         <div class="category-container">
 
 
+            <!-- SAFE -->
+
             <div class="category-card">
+
 
                 <div class="category-icon">
                     S
                 </div>
 
-                <h3>Safe</h3>
+
+                <h3>
+                    Safe
+                </h3>
+
 
                 <p>
-                    Normal messages that do not show suspicious behavior.
+
+                    Normal messages that do not show
+                    suspicious behavior.
+
                 </p>
+
 
             </div>
 
 
+            <!-- SPAM -->
+
             <div class="category-card">
+
 
                 <div class="category-icon">
                     SP
                 </div>
 
-                <h3>Spam</h3>
+
+                <h3>
+                    Spam
+                </h3>
+
 
                 <p>
+
                     Unwanted promotional or repeated messages.
+
                 </p>
+
 
             </div>
 
 
+            <!-- PHISHING -->
+
             <div class="category-card">
+
 
                 <div class="category-icon">
                     P
                 </div>
 
-                <h3>Phishing</h3>
+
+                <h3>
+                    Phishing
+                </h3>
+
 
                 <p>
-                    Messages attempting to obtain passwords, OTPs or
-                    sensitive information.
+
+                    Messages attempting to obtain passwords,
+                    OTPs or sensitive information.
+
                 </p>
+
 
             </div>
 
 
+            <!-- SUSPICIOUS -->
+
             <div class="category-card">
+
 
                 <div class="category-icon">
                     ?
                 </div>
 
-                <h3>Suspicious</h3>
+
+                <h3>
+                    Suspicious
+                </h3>
+
 
                 <p>
-                    Messages containing potentially suspicious behavior
-                    or links.
+
+                    Messages containing potentially suspicious
+                    behavior or links.
+
                 </p>
+
 
             </div>
 
 
+            <!-- ABUSIVE -->
+
             <div class="category-card">
+
 
                 <div class="category-icon">
                     A
                 </div>
 
-                <h3>Abusive</h3>
+
+                <h3>
+                    Abusive
+                </h3>
+
 
                 <p>
-                    Messages containing insulting or abusive language.
+
+                    Messages containing insulting
+                    or abusive language.
+
                 </p>
 
+
             </div>
+
 
         </div>
 
     </section>
 
 
-    <!-- About -->
+
+    <!-- ================================
+         ABOUT
+    ================================= -->
+
     <section class="about">
+
 
         <div class="section-title">
 
-            <h2>About Social Shield</h2>
+
+            <h2>
+                About Social Shield
+            </h2>
+
 
             <p>
+
                 Social Shield is a Machine Learning and Natural Language
                 Processing based threat detection system.
+
             </p>
+
 
         </div>
 
@@ -271,62 +803,150 @@
         <div class="about-container">
 
 
+            <!-- MACHINE LEARNING -->
+
             <div class="about-card">
 
-                <h3>Machine Learning</h3>
+
+                <h3>
+                    Machine Learning
+                </h3>
+
 
                 <p>
-                    A trained Machine Learning model analyzes the text and
-                    predicts the type of threat.
+
+                    A trained Machine Learning model analyzes
+                    the text and predicts the type of threat.
+
                 </p>
+
 
             </div>
 
 
+            <!-- NLP -->
+
             <div class="about-card">
 
-                <h3>Natural Language Processing</h3>
+
+                <h3>
+                    Natural Language Processing
+                </h3>
+
 
                 <p>
-                    NLP techniques help the system process and understand
-                    textual messages.
+
+                    NLP techniques help the system process
+                    and understand textual messages.
+
                 </p>
+
 
             </div>
 
 
+            <!-- THREAT DETECTION -->
+
             <div class="about-card">
 
-                <h3>Threat Detection</h3>
+
+                <h3>
+                    Threat Detection
+                </h3>
+
 
                 <p>
-                    The system classifies messages as Safe, Spam, Phishing,
-                    Suspicious or Abusive.
+
+                    The system classifies messages as Safe,
+                    Spam, Phishing, Suspicious or Abusive.
+
                 </p>
 
+
             </div>
+
 
         </div>
 
     </section>
 
 
-    <!-- Footer -->
+
+    <!-- ================================
+         FOOTER
+    ================================= -->
+
     <footer>
 
-        <p>
-            Social Shield - Intelligent Social Media Threat Detection
-        </p>
 
         <p>
-            Machine Learning | NLP | Django
+
+            Social Shield - Intelligent Social Media Threat Detection
+
         </p>
+
+
+        <p>
+
+            Machine Learning | NLP | Django
+
+        </p>
+
 
     </footer>
 
 
-    <!-- JavaScript -->
+
+    <!-- ================================
+         JAVASCRIPT
+    ================================= -->
+
     <script src="{% static 'shield/script.js' %}"></script>
+
+
+    <script>
+
+        /*
+         * Social Shield Logo Flow Menu
+         */
+
+        const socialShieldLogo =
+            document.getElementById("socialShieldLogo");
+
+        const flowMenu =
+            document.getElementById("flowMenu");
+
+
+        /* Open / Close menu */
+
+        socialShieldLogo.addEventListener("click", function(event) {
+
+            event.stopPropagation();
+
+            flowMenu.classList.toggle("show");
+
+        });
+
+
+        /* Prevent menu click from closing immediately */
+
+        flowMenu.addEventListener("click", function(event) {
+
+            event.stopPropagation();
+
+        });
+
+
+        /* Close menu when clicking elsewhere */
+
+        document.addEventListener("click", function() {
+
+            flowMenu.classList.remove("show");
+
+        });
+
+    </script>
+
 
 </body>
 
