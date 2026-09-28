@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>App Checker | Social Shield</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a, #1e3a8a);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #0f172a;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #334155;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #2563eb;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 22px;
+            background: #f8fafc;
+            border-radius: 14px;
+            border-left: 5px solid #2563eb;
+        }
+
+        .result h2 {
+            margin-bottom: 12px;
+            color: #0f172a;
+        }
+
+        .result p {
+            margin-top: 8px;
+            color: #475569;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 22px;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .back:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">📦</div>
+
+    <h1>App Checker</h1>
+
+    <p class="subtitle">
+        Check an application for basic suspicious indicators.
+    </p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <label for="app_name">
+            Application Name
+        </label>
+
+        <input
+            type="text"
+            id="app_name"
+            name="app_name"
+            placeholder="Example: WhatsApp"
+        >
+
+        <label for="package_name">
+            Package Name
+        </label>
+
+        <input
+            type="text"
+            id="package_name"
+            name="package_name"
+            placeholder="Example: com.whatsapp"
+        >
+
+        <button type="submit">
+            🔍 Check Application
+        </button>
+
+    </form>
+
+    {% if result %}
+
+    <div class="result">
+
+        <h2>🛡️ Scan Result</h2>
+
+        <p>
+            <strong>Status:</strong>
+            {{ result.status|default:result.title }}
+        </p>
+
+        <p>
+            <strong>Risk Level:</strong>
+            {{ result.risk }}
+        </p>
+
+        <p>
+            {{ result.message }}
+        </p>
+
+    </div>
+
+    {% endif %}
+
+    <a href="{% url 'dashboard' %}" class="back">
+        ← Back to Dashboard
+    </a>
+
+</div>
+
+</body>
+</html>
