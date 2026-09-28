@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Shield - Message Analyzer</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;color:#1f2937}.topbar{background:#111827;color:#fff;padding:18px 45px;display:flex;justify-content:space-between;align-items:center}.logo{font-size:24px;font-weight:700}.nav a{color:#fff;text-decoration:none;margin-left:22px;font-size:14px}.nav a:hover{color:#93c5fd}.page{width:92%;max-width:950px;margin:42px auto}.back{display:inline-block;color:#2563eb;text-decoration:none;font-weight:700;margin-bottom:20px}.card{background:#fff;border-radius:18px;padding:32px;box-shadow:0 8px 25px rgba(0,0,0,.08)}h1{margin:0 0 10px;font-size:34px}.intro{color:#6b7280;margin-bottom:28px}.label{font-weight:700;display:block;margin-bottom:10px}.message{width:100%;min-height:220px;border:1px solid #d1d5db;border-radius:12px;padding:16px;font-size:16px;resize:vertical;outline:none}.message:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}.bottom{display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:15px}.count{color:#6b7280;font-size:14px}.button{border:0;border-radius:10px;background:#2563eb;color:#fff;padding:13px 22px;font-weight:700;font-size:15px;cursor:pointer}.button:hover{background:#1d4ed8}.button:disabled{opacity:.65;cursor:not-allowed}.result{margin-top:28px;border-radius:15px;padding:25px;background:#f8fafc;border:1px solid #e5e7eb}.result h2{margin-top:0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.metric{background:#fff;border-radius:12px;padding:16px;border:1px solid #e5e7eb}.metric strong{display:block;color:#6b7280;font-size:13px;margin-bottom:7px}.metric span{font-size:21px;font-weight:700}.warning{margin-top:15px;padding:13px;border-radius:10px;background:#fff7ed;color:#9a3412}.hidden{display:none}.status{font-weight:700;margin-bottom:15px}.new{margin-top:20px;background:#111827}.new:hover{background:#1f2937}@media(max-width:650px){.topbar{padding:16px 20px;flex-direction:column;gap:12px}.nav a{margin:0 7px}.page{width:94%;margin:25px auto}.card{padding:22px}h1{font-size:28px}.grid{grid-template-columns:1fr}.bottom{flex-direction:column;align-items:stretch}.button{width:100%}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="logo">🛡️ Social Shield</div><nav class="nav"><a href="/">Home</a><a href="/dashboard/">Dashboard</a><a href="/history/">History</a><a href="/logout/">Logout</a></nav></header>
+<main class="page">
+<a class="back" href="/dashboard/">← Back to Dashboard</a>
+<div class="card">
+<h1>💬 Message Analyzer</h1>
+<p class="intro">Paste a message below to check it for Safe, Spam, Phishing, Suspicious or Abusive content.</p>
+<label class="label" for="messageInput">Message to analyze</label>
+<textarea id="messageInput" class="message" maxlength="1000" placeholder="Example: Congratulations! You won a free prize. Click this link now."></textarea>
+<div class="bottom"><span id="charCount" class="count">0 / 1000</span><button id="analyzeBtn" class="button">🔍 Analyze Message</button></div>
+<div id="resultBox" class="result hidden">
+<div id="status" class="status">Analysis Result</div>
+<h2 id="resultTitle">Analysis Result</h2>
+<p id="resultMessage"></p>
+<div class="grid"><div class="metric"><strong>Category</strong><span id="categoryResult">-</span></div><div class="metric"><strong>Risk Level</strong><span id="riskResult">-</span></div><div class="metric"><strong>Confidence</strong><span id="confidenceResult">-</span></div></div>
+<div id="urlWarning" class="warning hidden"></div>
+<button id="newBtn" class="button new">Analyze Another Message</button>
+</div>
+</div>
+</main>
+<script>
+const input=document.getElementById('messageInput'), count=document.getElementById('charCount'), btn=document.getElementById('analyzeBtn'), box=document.getElementById('resultBox'), title=document.getElementById('resultTitle'), msg=document.getElementById('resultMessage'), cat=document.getElementById('categoryResult'), risk=document.getElementById('riskResult'), conf=document.getElementById('confidenceResult'), warn=document.getElementById('urlWarning'), status=document.getElementById('status');
+input.addEventListener('input',()=>count.textContent=input.value.length+' / 1000');
+function cookie(name){let v=null;document.cookie.split(';').forEach(c=>{c=c.trim();if(c.startsWith(name+'='))v=decodeURIComponent(c.substring(name.length+1))});return v}
+btn.addEventListener('click',async()=>{const message=input.value.trim();if(!message){alert('Please enter a message first.');return}btn.disabled=true;btn.textContent='Analyzing...';try{const fd=new FormData();fd.append('message',message);const r=await fetch('/analyze/',{method:'POST',headers:{'X-CSRFToken':cookie('csrftoken')},body:fd});const d=await r.json();if(!r.ok)throw new Error(d.error||'Analysis failed.');cat.textContent=d.category;risk.textContent=d.risk;conf.textContent=d.confidence+'%';title.textContent=d.category+' Detected';status.textContent='Analysis Complete';const texts={Safe:['Message Appears Safe','No major threat was detected in this message.'],Spam:['Spam Message Detected','This message may contain unwanted promotional or misleading content.'],Phishing:['Possible Phishing Message','Be careful. This message may attempt to collect sensitive information.'],Suspicious:['Suspicious Message','This message contains patterns that may require additional caution.'],Abusive:['Abusive Content Detected','This message contains potentially abusive language.']};const t=texts[d.category]||['Analysis Complete','The message has been analyzed.'];title.textContent=t[0];msg.textContent=t[1];if(d.has_url){warn.textContent='This message contains a URL. Be careful before opening unknown links.';warn.classList.remove('hidden')}else warn.classList.add('hidden');box.classList.remove('hidden');box.scrollIntoView({behavior:'smooth',block:'start'})}catch(e){alert(e.message)}finally{btn.disabled=false;btn.textContent='🔍 Analyze Message'}});
+document.getElementById('newBtn').addEventListener('click',()=>{input.value='';count.textContent='0 / 1000';box.classList.add('hidden');input.focus();window.scrollTo({top:0,behavior:'smooth'})});
+</script>
+</body>
+</html>

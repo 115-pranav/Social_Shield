@@ -21,8 +21,11 @@ def home(request):
 
 
 def analyze_message(request):
+    if request.method == "GET":
+        return render(request, "shield/analyze.html")
+
     if request.method != "POST":
-        return JsonResponse({"error": "Only POST requests are allowed."}, status=405)
+        return JsonResponse({"error": "Only GET and POST requests are allowed."}, status=405)
 
     message = request.POST.get("message", "").strip()
     if not message:
