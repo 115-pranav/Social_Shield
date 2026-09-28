@@ -44,7 +44,13 @@ def analyze_message(request):
     }
     risk = risk_levels.get(prediction, "UNKNOWN")
 
-    has_url = bool(re.search(r"https?://\S+|www\.\S+", message, re.IGNORECASE))
+    has_url = bool(
+    re.search(
+        r"https?://\S+|www\.\S+",
+        message,
+        re.IGNORECASE
+    )
+)
 
     Analysis.objects.create(
         user=request.user if request.user.is_authenticated else None,
@@ -180,3 +186,203 @@ def delete_my_data(request):
         Analysis.objects.filter(user=request.user).delete()
 
     return redirect("dashboard")
+# ============================================================
+# APP CHECKER
+# ============================================================
+
+def app_checker(request):
+
+    result = None
+
+    if request.method == "POST":
+
+        app_name = request.POST.get("app_name", "").strip()
+        package_name = request.POST.get("package_name", "").strip()
+
+        suspicious_words = [
+            "hack",
+            "crack",
+            "mod",
+            "cheat",
+            "spy",
+            "tracking",
+            "free money",
+            "unlimited"
+        ]
+
+        combined_text = (
+            app_name + " " + package_name
+        ).lower()
+
+        found_words = [
+            word
+            for word in suspicious_words
+            if word in combined_text
+        ]
+
+        if not app_name and not package_name:
+
+            result = {
+                "status": "⚠️ Input Required",
+                "risk": "UNKNOWN",
+                "message": "Please enter an app name or package name."
+            }
+
+        elif found_words:
+
+            result = {
+                "status": "⚠️ Suspicious",
+                "risk": "MEDIUM",
+                "message": (
+                    "Suspicious indicators found: "
+                    + ", ".join(found_words)
+                )
+            }
+
+        else:
+
+            result = {
+                "status": "✅ No Basic Warning Found",
+                "risk": "LOW",
+                "message": (
+                    "No obvious suspicious indicators "
+                    "were found in the supplied app information."
+                )
+            }
+
+    return render(
+        request,
+        "shield/app_checker.html",
+        {"result": result}
+    )
+
+
+# ============================================================
+# PHONE CHECKER
+# ============================================================
+
+def phone_checker(request):
+
+    result = None
+
+    if request.method == "POST":
+
+        phone = request.POST.get("phone", "").strip()
+
+        digits = "".join(
+            character
+            for character in phone
+            if character.isdigit()
+        )
+
+        if not phone:
+
+            result = {
+                "status": "⚠️ Input Required",
+                "risk": "UNKNOWN",
+                "message": "Please enter a phone number."
+            }
+
+        elif len(digits) < 10:
+
+            result = {
+                "status": "❌ Invalid Format",
+                "risk": "MEDIUM",
+                "message": "The phone number appears to be too short."
+            }
+
+        elif len(digits) > 15:
+
+            result = {
+                "status": "❌ Invalid Format",
+                "risk": "MEDIUM",
+                "message": (
+                    "The phone number is longer than "
+                    "a normal international number."
+                )
+            }
+
+        else:
+
+            result = {
+                "status": "✅ Basic Format Valid",
+                "risk": "LOW",
+                "message": (
+                    "The phone number has a basic "
+                    "valid-looking format. This does not "
+                    "verify the owner or prove that the "
+                    "number is safe."
+                )
+            }
+
+    return render(
+        request,
+        "shield/phone checker.html",
+        {"result": result}
+    )
+
+
+# ============================================================
+# SCREENSHOT SCANNER
+# ============================================================
+
+def screenshot_scanner(request):
+
+    result = None
+
+    if request.method == "POST":
+
+        screenshot = request.FILES.get("screenshot")
+
+        if not screenshot:
+
+            result = {
+                "risk": "UNKNOWN",
+                "message": "Please select a screenshot."
+            }
+
+        else:
+
+            allowed_types = [
+                "image/jpeg",
+                "image/png",
+                "image/webp"
+            ]
+
+            max_size = 5 * 1024 * 1024
+
+            if screenshot.content_type not in allowed_types:
+
+                result = {
+                    "risk": "MEDIUM",
+                    "message": (
+                        "Unsupported image format. "
+                        "Please upload JPG, PNG or WEBP."
+                    )
+                }
+
+            elif screenshot.size > max_size:
+
+                result = {
+                    "risk": "MEDIUM",
+                    "message": (
+                        "The screenshot is too large. "
+                        "Maximum size is 5 MB."
+                    )
+                }
+
+            else:
+
+                result = {
+                    "risk": "LOW",
+                    "message": (
+                        "Screenshot uploaded successfully. "
+                        "Basic file validation passed."
+                    )
+                }
+
+    return render(
+        request,
+        "shield/screenshot scanner.html",
+        {"result": result}
+    )
