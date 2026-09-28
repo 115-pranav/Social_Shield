@@ -379,7 +379,77 @@
             🔍 Analyze Message
         </a>
     </div>
+    <div class="security-tools">
 
+        <h2>🛡️ Security Tools</h2>
+
+        <div class="tools-grid">
+
+            <a href="{% url 'app_checker' %}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="tool-card">
+
+                <div class="tool-icon">📦</div>
+
+                <h3>App Checker</h3>
+
+                <p>
+                    Check an application name and package name
+                    for basic suspicious indicators.
+                </p>
+
+                <span class="tool-button">
+                    Open App Checker →
+                </span>
+
+            </a>
+
+
+            <a href="{% url 'screenshot_scanner' %}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="tool-card">
+
+                <div class="tool-icon">🖼️</div>
+
+                <h3>Screenshot Scanner</h3>
+
+                <p>
+                    Upload a screenshot and perform basic
+                    image file validation.
+                </p>
+
+                <span class="tool-button">
+                    Open Scanner →
+                </span>
+
+            </a>
+
+
+            <a href="{% url 'phone_checker' %}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="tool-card">
+
+                <div class="tool-icon">📱</div>
+
+                <h3>Phone Checker</h3>
+
+                <p>
+                    Check whether a phone number has a
+                    basic valid-looking format.
+                </p>
+
+                <span class="tool-button">
+                    Open Phone Checker →
+                </span>
+
+            </a>
+
+        </div>
+
+    </div>
 
         <div class="dashboard-actions">
             <a href="{% url 'download_data' %}" class="download-button">
