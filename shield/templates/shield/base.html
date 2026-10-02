@@ -22,7 +22,9 @@
             min-height: 100vh;
         }
 
-        /* AI CHATBOT */
+        /* =========================
+           AI CHATBOT BUTTON
+        ========================= */
 
         .chatbot-button {
             position: fixed;
@@ -38,11 +40,16 @@
             cursor: pointer;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
             z-index: 9999;
+            transition: transform 0.2s ease;
         }
 
         .chatbot-button:hover {
             transform: scale(1.08);
         }
+
+        /* =========================
+           CHATBOT WINDOW
+        ========================= */
 
         .chatbot-window {
             display: none;
@@ -72,6 +79,12 @@
             font-size: 17px;
         }
 
+        .chatbot-status {
+            font-size: 11px;
+            opacity: 0.75;
+            margin-top: 3px;
+        }
+
         .chatbot-close {
             border: none;
             background: transparent;
@@ -80,6 +93,10 @@
             cursor: pointer;
         }
 
+        /* =========================
+           CHAT MESSAGES
+        ========================= */
+
         .chatbot-messages {
             height: 350px;
             padding: 15px;
@@ -87,19 +104,43 @@
             background: #f8fafc;
         }
 
-        .bot-message {
-            background: #e5e7eb;
+        .bot-message,
+        .user-message {
             padding: 10px 12px;
             border-radius: 12px;
             margin-bottom: 10px;
             max-width: 85%;
             font-size: 14px;
+            line-height: 1.45;
+            word-wrap: break-word;
         }
+
+        .bot-message {
+            background: #e5e7eb;
+            color: #111827;
+            margin-right: auto;
+        }
+
+        .user-message {
+            background: #dbeafe;
+            color: #111827;
+            margin-left: auto;
+        }
+
+        .typing-message {
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        /* =========================
+           INPUT AREA
+        ========================= */
 
         .chatbot-input-area {
             display: flex;
             padding: 10px;
             border-top: 1px solid #ddd;
+            background: white;
         }
 
         .chatbot-input {
@@ -108,6 +149,11 @@
             border: 1px solid #ccc;
             border-radius: 10px;
             outline: none;
+            font-size: 14px;
+        }
+
+        .chatbot-input:focus {
+            border-color: #111827;
         }
 
         .chatbot-send {
@@ -118,13 +164,25 @@
             background: #111827;
             color: white;
             cursor: pointer;
+            font-size: 16px;
         }
 
+        .chatbot-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
         @media (max-width: 500px) {
+
             .chatbot-window {
                 right: 10px;
                 bottom: 90px;
                 width: calc(100% - 20px);
+                height: 470px;
             }
 
             .chatbot-button {
@@ -138,41 +196,97 @@
 <body>
 
     <main class="page-content">
+
         {% block content %}
         {% endblock %}
+
     </main>
 
-    <!-- AI CHATBOT BUTTON -->
+
+    <!-- =================================
+         DJANGO CSRF TOKEN
+    ================================== -->
+
+    <form style="display:none;">
+        {% csrf_token %}
+    </form>
+
+
+    <!-- =================================
+         AI CHATBOT BUTTON
+    ================================== -->
+
     <button
         class="chatbot-button"
         id="chatbotButton"
         onclick="toggleChatbot()"
         aria-label="Open Social Shield AI Assistant">
+
         🤖
+
     </button>
 
-    <!-- AI CHATBOT WINDOW -->
-    <div class="chatbot-window" id="chatbotWindow">
+
+    <!-- =================================
+         AI CHATBOT WINDOW
+    ================================== -->
+
+    <div
+        class="chatbot-window"
+        id="chatbotWindow">
+
+        <!-- HEADER -->
 
         <div class="chatbot-header">
-            <h3>🤖 Social Shield AI</h3>
+
+            <div>
+
+                <h3>🤖 Social Shield AI</h3>
+
+                <div class="chatbot-status">
+                    ● Online
+                </div>
+
+            </div>
 
             <button
                 class="chatbot-close"
-                onclick="toggleChatbot()">
+                onclick="toggleChatbot()"
+                aria-label="Close chatbot">
+
                 ×
+
             </button>
+
         </div>
 
-        <div class="chatbot-messages" id="chatbotMessages">
+
+        <!-- MESSAGES -->
+
+        <div
+            class="chatbot-messages"
+            id="chatbotMessages">
 
             <div class="bot-message">
+
                 👋 Hello! I'm the Social Shield AI Assistant.
-                Ask me about phishing, spam, suspicious messages,
-                online safety, or cybersecurity.
+
+                <br><br>
+
+                I can help with:
+
+                <br>🛡️ Phishing
+                <br>📩 Spam
+                <br>⚠️ Suspicious messages
+                <br>🔐 OTP and password safety
+                <br>🌐 Cybersecurity
+
             </div>
 
         </div>
+
+
+        <!-- INPUT -->
 
         <div class="chatbot-input-area">
 
@@ -180,71 +294,232 @@
                 type="text"
                 id="chatbotInput"
                 class="chatbot-input"
-                placeholder="Ask something..."
+                placeholder="Ask about a cyber threat..."
+                autocomplete="off"
                 onkeydown="if(event.key === 'Enter') sendChatMessage()">
 
             <button
                 class="chatbot-send"
+                id="chatbotSend"
                 onclick="sendChatMessage()">
+
                 ➤
+
             </button>
 
         </div>
 
     </div>
 
+
+    <!-- =================================
+         CHATBOT JAVASCRIPT
+    ================================== -->
+
     <script>
 
         function toggleChatbot() {
 
-            const chatbot = document.getElementById("chatbotWindow");
+            const chatbot =
+                document.getElementById("chatbotWindow");
 
             if (chatbot.style.display === "block") {
+
                 chatbot.style.display = "none";
+
             } else {
+
                 chatbot.style.display = "block";
+
+                setTimeout(function () {
+
+                    document
+                        .getElementById("chatbotInput")
+                        .focus();
+
+                }, 100);
+
             }
         }
 
 
-        function sendChatMessage() {
+        function getCSRFToken() {
 
-            const input = document.getElementById("chatbotInput");
-            const messages = document.getElementById("chatbotMessages");
+            const csrfInput =
+                document.querySelector(
+                    'input[name="csrfmiddlewaretoken"]'
+                );
 
-            const message = input.value.trim();
+            if (csrfInput) {
 
-            if (message === "") {
-                return;
+                return csrfInput.value;
+
             }
 
-            const userMessage = document.createElement("div");
+            return "";
 
-            userMessage.className = "bot-message";
-            userMessage.style.marginLeft = "auto";
-            userMessage.style.background = "#dbeafe";
+        }
 
-            userMessage.textContent = "You: " + message;
+
+        async function sendChatMessage() {
+
+            const input =
+                document.getElementById("chatbotInput");
+
+            const messages =
+                document.getElementById("chatbotMessages");
+
+            const sendButton =
+                document.getElementById("chatbotSend");
+
+            const message =
+                input.value.trim();
+
+
+            if (message === "") {
+
+                return;
+
+            }
+
+
+            /* USER MESSAGE */
+
+            const userMessage =
+                document.createElement("div");
+
+            userMessage.className =
+                "user-message";
+
+            userMessage.textContent =
+                message;
 
             messages.appendChild(userMessage);
 
+
             input.value = "";
 
-            const botMessage = document.createElement("div");
+            input.disabled = true;
 
-            botMessage.className = "bot-message";
+            sendButton.disabled = true;
 
-            botMessage.textContent =
-                "I'm your Social Shield Assistant. " +
-                "I'm currently in basic mode. " +
-                "The AI cybersecurity engine will be connected next.";
 
-            messages.appendChild(botMessage);
+            /* THINKING MESSAGE */
 
-            messages.scrollTop = messages.scrollHeight;
+            const thinkingMessage =
+                document.createElement("div");
+
+            thinkingMessage.className =
+                "bot-message typing-message";
+
+            thinkingMessage.textContent =
+                "🤖 Thinking...";
+
+            messages.appendChild(thinkingMessage);
+
+
+            messages.scrollTop =
+                messages.scrollHeight;
+
+
+            try {
+
+                const response =
+                    await fetch("/chatbot/", {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/x-www-form-urlencoded",
+
+                            "X-CSRFToken":
+                                getCSRFToken()
+
+                        },
+
+                        body:
+                            new URLSearchParams({
+
+                                message: message
+
+                            })
+
+                    });
+
+
+                const data =
+                    await response.json();
+
+
+                thinkingMessage.remove();
+
+
+                /* SERVER ERROR */
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error ||
+                        "Unable to contact the assistant."
+                    );
+
+                }
+
+
+                /* BOT RESPONSE */
+
+                const botMessage =
+                    document.createElement("div");
+
+                botMessage.className =
+                    "bot-message";
+
+                botMessage.textContent =
+                    data.answer ||
+                    "Sorry, I could not generate a response.";
+
+
+                messages.appendChild(botMessage);
+
+
+            } catch (error) {
+
+                thinkingMessage.remove();
+
+
+                const errorMessage =
+                    document.createElement("div");
+
+                errorMessage.className =
+                    "bot-message";
+
+                errorMessage.textContent =
+                    "⚠️ " +
+                    (error.message ||
+                    "Something went wrong. Please try again.");
+
+
+                messages.appendChild(errorMessage);
+
+            }
+
+
+            input.disabled = false;
+
+            sendButton.disabled = false;
+
+            input.focus();
+
+
+            messages.scrollTop =
+                messages.scrollHeight;
+
         }
 
     </script>
+
 
 </body>
 </html>
