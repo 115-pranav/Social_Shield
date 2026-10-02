@@ -26,14 +26,35 @@ def analyze_message(request):
         return render(request, "shield/analyze.html")
 
     if request.method != "POST":
-        return JsonResponse({"error": "Only GET and POST requests are allowed."}, status=405)
+        return JsonResponse(
+            {"error": "Only GET and POST requests are allowed."},
+            status=405
+        )
 
     message = request.POST.get("message", "").strip()
+
     if not message:
-        return JsonResponse({"error": "Please enter a message."}, status=400)
+        return JsonResponse(
+            {"error": "Please enter a message."},
+            status=400
+        )
+
+    # -----------------------------------------
+    # MULTILINGUAL LANGUAGE DETECTION
+    # -----------------------------------------
+
+    from .multilingual import detect_language
+
+    language_name, language_code = detect_language(message)
+
+    # -----------------------------------------
+    # EXISTING SOCIAL SHIELD ML ANALYSIS
+    # -----------------------------------------
 
     prediction = model.predict([message])[0]
+
     probabilities = model.predict_proba([message])[0]
+
     confidence = round(max(probabilities) * 100, 2)
 
     risk_levels = {
@@ -43,15 +64,24 @@ def analyze_message(request):
         "Suspicious": "MEDIUM",
         "Abusive": "HIGH",
     }
+
     risk = risk_levels.get(prediction, "UNKNOWN")
 
+    # -----------------------------------------
+    # URL DETECTION
+    # -----------------------------------------
+
     has_url = bool(
-    re.search(
-        r"https?://\S+|www\.\S+",
-        message,
-        re.IGNORECASE
+        re.search(
+            r"https?://\S+|www\.\S+",
+            message,
+            re.IGNORECASE
+        )
     )
-)
+
+    # -----------------------------------------
+    # SAVE ANALYSIS
+    # -----------------------------------------
 
     Analysis.objects.create(
         user=request.user if request.user.is_authenticated else None,
@@ -61,11 +91,17 @@ def analyze_message(request):
         confidence=confidence,
     )
 
+    # -----------------------------------------
+    # RETURN RESULT
+    # -----------------------------------------
+
     return JsonResponse({
         "category": prediction,
         "risk": risk,
         "confidence": confidence,
         "has_url": has_url,
+        "language": language_name,
+        "language_code": language_code,
     })
 
 
