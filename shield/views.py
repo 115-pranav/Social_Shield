@@ -13,7 +13,7 @@ from .models import Analysis
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-MODEL_PATH = BASE_DIR / "ML" / "model" / "social_shield_model.pkl"
+MODEL_PATH = BASE_DIR / "ML" / "model" / "social_shield_multilingual_model.pkl"
 model = joblib.load(MODEL_PATH)
 
 

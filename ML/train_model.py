@@ -10,37 +10,58 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 
 
-# Get the project folder
+# ==========================================
+# PROJECT PATHS
+# ==========================================
+
 BASE_DIR = Path(__file__).resolve().parent
 
-# Dataset location
-DATASET_PATH = BASE_DIR / "dataset" / "messages.csv"
+DATASET_PATH = BASE_DIR / "dataset" / "messages_multilingual.csv"
 
-# Model output location
 MODEL_DIR = BASE_DIR / "model"
-MODEL_PATH = MODEL_DIR / "social_shield_model.pkl"
+
+# New model name - keeps the old model safe
+MODEL_PATH = MODEL_DIR / "social_shield_multilingual_model.pkl"
 
 
-# Create model folder if it doesn't exist
+# Create model directory
 MODEL_DIR.mkdir(exist_ok=True)
 
 
-# Load dataset
+# ==========================================
+# LOAD DATASET
+# ==========================================
+
+print("Loading multilingual dataset...")
+
 data = pd.read_csv(DATASET_PATH)
 
 print("Dataset loaded successfully.")
-print("Number of messages:", len(data))
+print("Total messages:", len(data))
 
-print("\nCategories:")
+
+# ==========================================
+# SHOW CATEGORY COUNTS
+# ==========================================
+
+print("\nCategory distribution:")
+
 print(data["label"].value_counts())
 
 
-# Input and output
-X = data["text"]
-y = data["label"]
+# ==========================================
+# INPUT AND OUTPUT
+# ==========================================
+
+X = data["text"].astype(str)
+
+y = data["label"].astype(str)
 
 
-# Split dataset
+# ==========================================
+# SPLIT DATASET
+# ==========================================
+
 X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
@@ -50,46 +71,88 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 
-# Create ML pipeline
+print("\nTraining examples:", len(X_train))
+print("Testing examples:", len(X_test))
+
+
+# ==========================================
+# CREATE ML PIPELINE
+# ==========================================
+
 model = Pipeline([
     (
         "tfidf",
         TfidfVectorizer(
             lowercase=True,
-            stop_words="english",
-            ngram_range=(1, 2)
+            ngram_range=(1, 2),
+            analyzer="char_wb",
+            min_df=1
         )
     ),
+
     (
         "classifier",
         LogisticRegression(
-            max_iter=1000
+            max_iter=2000,
+            class_weight="balanced"
         )
     )
 ])
 
 
-# Train model
-print("\nTraining Social Shield model...")
+# ==========================================
+# TRAIN MODEL
+# ==========================================
+
+print("\nTraining multilingual Social Shield model...")
 
 model.fit(X_train, y_train)
 
 
-# Test model
+# ==========================================
+# TEST MODEL
+# ==========================================
+
 predictions = model.predict(X_test)
 
 accuracy = accuracy_score(y_test, predictions)
 
-print("\nModel training completed.")
-print("Accuracy:", round(accuracy * 100, 2), "%")
 
+print("\n==========================================")
+print("MODEL TRAINING COMPLETED")
+print("==========================================")
+
+print(
+    "Test Accuracy:",
+    round(accuracy * 100, 2),
+    "%"
+)
+
+
+# ==========================================
+# CLASSIFICATION REPORT
+# ==========================================
 
 print("\nClassification Report:")
-print(classification_report(y_test, predictions, zero_division=0))
+
+print(
+    classification_report(
+        y_test,
+        predictions,
+        zero_division=0
+    )
+)
 
 
-# Save model
+# ==========================================
+# SAVE MODEL
+# ==========================================
+
 joblib.dump(model, MODEL_PATH)
 
-print("\nModel saved successfully!")
+
+print("\n==========================================")
+print("MODEL SAVED SUCCESSFULLY")
+print("==========================================")
+
 print("Location:", MODEL_PATH)
