@@ -35,7 +35,7 @@ Sitemap: https://social-shield-ir70.onrender.com/sitemap.xml
 
 urlpatterns = [
     path("", views.home, name="home"),
-
+    path("chatbot/", views.chatbot, name="chatbot"),
     path("analyze/", views.analyze_message, name="analyze_message"),
     path("history/", views.history, name="history"),
     path("dashboard/", views.dashboard, name="dashboard"),

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Social Shield{% endblock %}</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fb;
+            color: #111827;
+        }
+
+        .page-content {
+            min-height: 100vh;
+        }
+
+        /* AI CHATBOT */
+
+        .chatbot-button {
+            position: fixed;
+            right: 25px;
+            bottom: 25px;
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            border: none;
+            background: #111827;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+            z-index: 9999;
+        }
+
+        .chatbot-button:hover {
+            transform: scale(1.08);
+        }
+
+        .chatbot-window {
+            display: none;
+            position: fixed;
+            right: 25px;
+            bottom: 100px;
+            width: 350px;
+            height: 470px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            z-index: 9998;
+        }
+
+        .chatbot-header {
+            background: #111827;
+            color: white;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-header h3 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .chatbot-close {
+            border: none;
+            background: transparent;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .chatbot-messages {
+            height: 350px;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+
+        .bot-message {
+            background: #e5e7eb;
+            padding: 10px 12px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            max-width: 85%;
+            font-size: 14px;
+        }
+
+        .chatbot-input-area {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .chatbot-input {
+            flex: 1;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .chatbot-send {
+            margin-left: 8px;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 10px;
+            background: #111827;
+            color: white;
+            cursor: pointer;
+        }
+
+        @media (max-width: 500px) {
+            .chatbot-window {
+                right: 10px;
+                bottom: 90px;
+                width: calc(100% - 20px);
+            }
+
+            .chatbot-button {
+                right: 15px;
+                bottom: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="page-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- AI CHATBOT BUTTON -->
+    <button
+        class="chatbot-button"
+        id="chatbotButton"
+        onclick="toggleChatbot()"
+        aria-label="Open Social Shield AI Assistant">
+        🤖
+    </button>
+
+    <!-- AI CHATBOT WINDOW -->
+    <div class="chatbot-window" id="chatbotWindow">
+
+        <div class="chatbot-header">
+            <h3>🤖 Social Shield AI</h3>
+
+            <button
+                class="chatbot-close"
+                onclick="toggleChatbot()">
+                ×
+            </button>
+        </div>
+
+        <div class="chatbot-messages" id="chatbotMessages">
+
+            <div class="bot-message">
+                👋 Hello! I'm the Social Shield AI Assistant.
+                Ask me about phishing, spam, suspicious messages,
+                online safety, or cybersecurity.
+            </div>
+
+        </div>
+
+        <div class="chatbot-input-area">
+
+            <input
+                type="text"
+                id="chatbotInput"
+                class="chatbot-input"
+                placeholder="Ask something..."
+                onkeydown="if(event.key === 'Enter') sendChatMessage()">
+
+            <button
+                class="chatbot-send"
+                onclick="sendChatMessage()">
+                ➤
+            </button>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        function toggleChatbot() {
+
+            const chatbot = document.getElementById("chatbotWindow");
+
+            if (chatbot.style.display === "block") {
+                chatbot.style.display = "none";
+            } else {
+                chatbot.style.display = "block";
+            }
+        }
+
+
+        function sendChatMessage() {
+
+            const input = document.getElementById("chatbotInput");
+            const messages = document.getElementById("chatbotMessages");
+
+            const message = input.value.trim();
+
+            if (message === "") {
+                return;
+            }
+
+            const userMessage = document.createElement("div");
+
+            userMessage.className = "bot-message";
+            userMessage.style.marginLeft = "auto";
+            userMessage.style.background = "#dbeafe";
+
+            userMessage.textContent = "You: " + message;
+
+            messages.appendChild(userMessage);
+
+            input.value = "";
+
+            const botMessage = document.createElement("div");
+
+            botMessage.className = "bot-message";
+
+            botMessage.textContent =
+                "I'm your Social Shield Assistant. " +
+                "I'm currently in basic mode. " +
+                "The AI cybersecurity engine will be connected next.";
+
+            messages.appendChild(botMessage);
+
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+    </script>
+
+</body>
+</html>
