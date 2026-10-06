@@ -1,6 +1,8 @@
 from pathlib import Path
 import csv
 import re
+import ipaddress
+from urllib.parse import urlparse
 
 import cv2
 import numpy as np
@@ -740,6 +742,294 @@ def chatbot(request):
 
 
 # =========================================================
+# QR URL SECURITY ANALYZER
+# =========================================================
+
+def analyze_qr_url(url):
+    """
+    Performs basic security checks on a QR-decoded URL.
+
+    This is a heuristic security check.
+    It does not prove that a website is malicious or safe.
+    """
+
+    original_url = url.strip()
+    normalized_url = original_url
+
+    # -----------------------------------------
+    # NORMALIZE WWW URL
+    # -----------------------------------------
+
+    if normalized_url.lower().startswith("www."):
+        normalized_url = "https://" + normalized_url
+
+    # -----------------------------------------
+    # PARSE URL
+    # -----------------------------------------
+
+    try:
+
+        parsed = urlparse(
+            normalized_url
+        )
+
+        hostname = parsed.hostname or ""
+        hostname = hostname.lower()
+
+    except Exception:
+
+        return (
+            "MEDIUM",
+            [
+                "The QR code contains a URL that could not be parsed normally."
+            ]
+        )
+
+    indicators = []
+
+    # -----------------------------------------
+    # 1. INVALID / MISSING HOSTNAME
+    # -----------------------------------------
+
+    if not hostname:
+
+        indicators.append(
+            "The URL does not contain a recognizable domain name."
+        )
+
+    # -----------------------------------------
+    # 2. IP ADDRESS
+    # -----------------------------------------
+
+    if hostname:
+
+        try:
+
+            ipaddress.ip_address(
+                hostname
+            )
+
+            indicators.append(
+                "The website uses an IP address instead of a normal domain name."
+            )
+
+        except ValueError:
+            pass
+
+    # -----------------------------------------
+    # 3. HTTP WITHOUT HTTPS
+    # -----------------------------------------
+
+    if parsed.scheme.lower() == "http":
+
+        indicators.append(
+            "The URL uses HTTP instead of HTTPS."
+        )
+
+    # -----------------------------------------
+    # 4. @ SYMBOL
+    # -----------------------------------------
+
+    if "@" in parsed.netloc:
+
+        indicators.append(
+            "The URL contains an @ symbol, which can make the actual destination harder to recognize."
+        )
+
+    # -----------------------------------------
+    # 5. PUNYCODE
+    # -----------------------------------------
+
+    if "xn--" in hostname:
+
+        indicators.append(
+            "The domain contains punycode, which can sometimes be used to create look-alike domains."
+        )
+
+    # -----------------------------------------
+    # 6. VERY LONG DOMAIN
+    # -----------------------------------------
+
+    if len(hostname) > 60:
+
+        indicators.append(
+            "The domain name is unusually long."
+        )
+
+    # -----------------------------------------
+    # 7. MANY SUBDOMAINS
+    # -----------------------------------------
+
+    if hostname.count(".") >= 4:
+
+        indicators.append(
+            "The domain contains an unusually large number of subdomains."
+        )
+
+    # -----------------------------------------
+    # 8. SUSPICIOUS KEYWORDS
+    # -----------------------------------------
+
+    suspicious_keywords = [
+        "login",
+        "verify",
+        "verification",
+        "account",
+        "secure",
+        "security",
+        "update",
+        "password",
+        "credential",
+        "otp",
+        "payment",
+        "wallet",
+        "bank",
+        "signin",
+        "confirm",
+        "unlock",
+        "suspended",
+        "claim",
+        "prize",
+        "reward",
+        "gift",
+        "free",
+    ]
+
+    url_text = (
+        hostname
+        + " "
+        + parsed.path.lower()
+        + " "
+        + parsed.query.lower()
+    )
+
+    found_keywords = []
+
+    for keyword in suspicious_keywords:
+
+        if keyword in url_text:
+
+            found_keywords.append(
+                keyword
+            )
+
+    if found_keywords:
+
+        unique_keywords = list(
+            dict.fromkeys(found_keywords)
+        )
+
+        indicators.append(
+            "The URL contains security-sensitive or promotional keywords: "
+            + ", ".join(unique_keywords[:5])
+            + "."
+        )
+
+    # -----------------------------------------
+    # 9. VERY LONG URL
+    # -----------------------------------------
+
+    if len(original_url) > 180:
+
+        indicators.append(
+            "The complete URL is unusually long."
+        )
+
+    # -----------------------------------------
+    # 10. MANY SPECIAL CHARACTERS
+    # -----------------------------------------
+
+    special_character_count = len(
+        re.findall(
+            r"[%_=+]",
+            original_url
+        )
+    )
+
+    if special_character_count >= 8:
+
+        indicators.append(
+            "The URL contains an unusually high number of special characters."
+        )
+
+    # -----------------------------------------
+    # 11. EXCESSIVE PATH DEPTH
+    # -----------------------------------------
+
+    path_parts = [
+        part
+        for part in parsed.path.split("/")
+        if part
+    ]
+
+    if len(path_parts) >= 6:
+
+        indicators.append(
+            "The URL contains an unusually deep path structure."
+        )
+
+    # -----------------------------------------
+    # CALCULATE RISK
+    # -----------------------------------------
+
+    score = 0
+
+    for indicator in indicators:
+
+        if (
+            "IP address" in indicator
+            or "@ symbol" in indicator
+            or "punycode" in indicator
+        ):
+
+            score += 3
+
+        elif (
+            "HTTP instead of HTTPS" in indicator
+            or "security-sensitive" in indicator
+            or "promotional keywords" in indicator
+        ):
+
+            score += 2
+
+        else:
+
+            score += 1
+
+    # -----------------------------------------
+    # RISK LEVEL
+    # -----------------------------------------
+
+    if not hostname:
+
+        risk = "MEDIUM"
+
+    elif score >= 6:
+
+        risk = "HIGH"
+
+    elif score >= 3:
+
+        risk = "MEDIUM"
+
+    else:
+
+        risk = "LOW"
+
+    # -----------------------------------------
+    # NO WARNING INDICATORS
+    # -----------------------------------------
+
+    if not indicators:
+
+        indicators.append(
+            "No obvious URL warning signs were detected by the basic security checks."
+        )
+
+    return risk, indicators
+
+
+# =========================================================
 # QR CODE SCANNER
 # =========================================================
 
@@ -931,18 +1221,19 @@ def qr_scanner(request):
         )
 
         # -------------------------------------
-        # URL RESULT
+        # URL SECURITY ANALYSIS
         # -------------------------------------
 
         if is_url:
 
-            risk = "SUSPICIOUS"
+            risk, indicators = analyze_qr_url(
+                decoded_text
+            )
 
             explanation = (
-                "This QR code contains a website address. "
-                "Social Shield has not opened the website "
-                "automatically. Verify the domain carefully "
-                "before visiting it."
+                "QR URL security analysis completed. "
+                "The website was not opened automatically. "
+                "The result is based on basic URL warning signs."
             )
 
         # -------------------------------------
@@ -952,6 +1243,10 @@ def qr_scanner(request):
         else:
 
             risk = "LOW"
+
+            indicators = [
+                "No website URL was detected in the QR content."
+            ]
 
             explanation = (
                 "The QR code contains text or other information "
@@ -970,6 +1265,7 @@ def qr_scanner(request):
                 "is_url": is_url,
                 "risk": risk,
                 "explanation": explanation,
+                "indicators": indicators,
             }
         )
 
