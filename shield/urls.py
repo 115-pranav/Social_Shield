@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import cv2
+import numpy as np
 from django.conf import settings
 from django.contrib.sitemaps.views import sitemap
 from django.http import HttpResponse
@@ -37,6 +39,7 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("chatbot/", views.chatbot, name="chatbot"),
     path("analyze/", views.analyze_message, name="analyze_message"),
+    path("qr-scanner/", views.qr_scanner, name="qr_scanner"),
     path("history/", views.history, name="history"),
     path("dashboard/", views.dashboard, name="dashboard"),
 

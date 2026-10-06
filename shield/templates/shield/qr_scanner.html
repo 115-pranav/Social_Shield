@@ -1,0 +1,330 @@
+{% extends "shield/base.html" %}
+
+{% block title %}QR Scanner | Social Shield{% endblock %}
+
+{% block content %}
+
+<style>
+    .qr-container {
+        max-width: 850px;
+        margin: 50px auto;
+        padding: 20px;
+    }
+
+    .qr-card {
+        background: white;
+        border-radius: 20px;
+        padding: 35px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        text-align: center;
+    }
+
+    .qr-icon {
+        font-size: 60px;
+        margin-bottom: 10px;
+    }
+
+    .qr-card h1 {
+        margin-bottom: 10px;
+        color: #111827;
+    }
+
+    .qr-card p {
+        color: #6b7280;
+        margin-bottom: 25px;
+    }
+
+    .upload-box {
+        border: 2px dashed #9ca3af;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 20px;
+        background: #f9fafb;
+    }
+
+    .upload-box input {
+        margin-top: 15px;
+    }
+
+    .scan-button {
+        border: none;
+        background: #111827;
+        color: white;
+        padding: 13px 25px;
+        border-radius: 10px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .scan-button:hover {
+        opacity: 0.9;
+    }
+
+    .scan-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .result {
+        display: none;
+        margin-top: 25px;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: left;
+        background: #f8fafc;
+    }
+
+    .result h2 {
+        margin-top: 0;
+    }
+
+    .decoded-content {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        word-break: break-word;
+        border: 1px solid #e5e7eb;
+    }
+
+    .risk {
+        font-weight: bold;
+        margin-top: 15px;
+    }
+
+    .error {
+        display: none;
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 10px;
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .loading {
+        display: none;
+        margin-top: 20px;
+        color: #4b5563;
+    }
+
+    @media (max-width: 600px) {
+        .qr-container {
+            margin: 20px auto;
+            padding: 15px;
+        }
+
+        .qr-card {
+            padding: 25px 18px;
+        }
+    }
+</style>
+
+
+<div class="qr-container">
+
+    <div class="qr-card">
+
+        <div class="qr-icon">📷</div>
+
+        <h1>QR Code Scanner</h1>
+
+        <p>
+            Upload a QR code image and Social Shield will decode
+            its contents and check whether it contains a website URL.
+        </p>
+
+
+        <form id="qrForm">
+
+            {% csrf_token %}
+
+            <div class="upload-box">
+
+                <strong>Select QR Code Image</strong>
+
+                <br>
+
+                <input
+                    type="file"
+                    id="qrImage"
+                    name="qr_image"
+                    accept="image/*"
+                    required
+                >
+
+            </div>
+
+            <button
+                type="submit"
+                class="scan-button"
+                id="scanButton">
+
+                🔍 Scan QR Code
+
+            </button>
+
+        </form>
+
+
+        <div
+            class="loading"
+            id="loading">
+
+            🔄 Scanning QR code...
+
+        </div>
+
+
+        <div
+            class="error"
+            id="error">
+        </div>
+
+
+        <div
+            class="result"
+            id="result">
+
+            <h2>🔎 Scan Result</h2>
+
+            <p><strong>Decoded Content:</strong></p>
+
+            <div
+                class="decoded-content"
+                id="decodedContent">
+            </div>
+
+            <p class="risk">
+                Risk Level:
+                <span id="riskLevel"></span>
+            </p>
+
+            <p>
+                <strong>Explanation:</strong>
+            </p>
+
+            <p id="explanation"></p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const qrForm =
+    document.getElementById("qrForm");
+
+const qrImage =
+    document.getElementById("qrImage");
+
+const scanButton =
+    document.getElementById("scanButton");
+
+const loading =
+    document.getElementById("loading");
+
+const errorBox =
+    document.getElementById("error");
+
+const result =
+    document.getElementById("result");
+
+const decodedContent =
+    document.getElementById("decodedContent");
+
+const riskLevel =
+    document.getElementById("riskLevel");
+
+const explanation =
+    document.getElementById("explanation");
+
+
+qrForm.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+
+    errorBox.style.display = "none";
+
+    result.style.display = "none";
+
+    loading.style.display = "block";
+
+    scanButton.disabled = true;
+
+
+    const formData =
+        new FormData(qrForm);
+
+
+    try {
+
+        const response =
+            await fetch(
+                "{% url 'qr_scanner' %}",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        loading.style.display = "none";
+
+        scanButton.disabled = false;
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "QR scanning failed."
+            );
+
+        }
+
+
+        decodedContent.textContent =
+            data.decoded_text;
+
+
+        riskLevel.textContent =
+            data.risk;
+
+
+        explanation.textContent =
+            data.explanation;
+
+
+        result.style.display =
+            "block";
+
+
+    } catch (error) {
+
+        loading.style.display =
+            "none";
+
+        scanButton.disabled =
+            false;
+
+        errorBox.textContent =
+            "⚠️ " +
+            error.message;
+
+        errorBox.style.display =
+            "block";
+
+    }
+
+});
+
+</script>
+
+{% endblock %} farther farther
